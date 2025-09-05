@@ -1,13 +1,13 @@
-
 public class Drinks {
+    private final String name;
+    private final double price;
 
-	public String drink;
-	public Drinks(String drink) {
-		// TODO Auto-generated constructor stub
-	}
-	
-	public String GetDrink() {
-		return drink;
-		}
+    public Drinks(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
 
+    public String getName() { return name; }
+    public double getPrice() { return price; }
 }
+

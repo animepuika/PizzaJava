@@ -1,15 +1,13 @@
-
 public class Sides {
+    private final String name;
+    private final double price;
 
-	public String sides;
-	public Sides(String sides) {
-		// TODO Auto-generated constructor stub
-		this.sides = sides;
-	}
-	
-	public String GetSides() {
-		return sides;
-		}
+    public Sides(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
 
-
+    public String getName() { return name; }
+    public double getPrice() { return price; }
 }
+

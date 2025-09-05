@@ -1,32 +1,73 @@
-Repository link https://github.com/animepuika/PizzaPatterns
+Repository link https://github.com/animepuika/PizzaJava
 
-I worked alone because I am a 3 year student doing a minor right now.
-
-Application to order pizzas.
+I worked alone because I am a 4 year.
 
 Design Patterns that are being used:
+# Pizza Ordering System (Java)
 
-1. Observer Pattern
-2. Bridge Pattern
-3. Builder Pattern
+Console app that shows six classic design patterns in a pizza-ordering context.  
+Clean construction for pizzas, composable extras, decoupled views, order notifications, and swappable pricing rules.
 
-Observer Pattern: The classes involved are Customer, Order, and MainApp.
+---
 
-The Observer pattern allows an object to log in and log out and receive updates from another object (subject) when the object's state changes. 
-In the MainApp class, after creating a new order, the program creates her Customer object containing the customer's name and location. 
-This Customer object is then registered as an observer of the Order object using the placeOrder() method. When an order is placed or withdrawn, the Order object calls the updateOrder() method to notify the observer (in this case her Customer object). 
-The Customer class implements the Observer interface and defines an update() method to handle updates from the Order object.
+## Patterns
 
-Bridge pattern: The classes involved are UserTypes, User, CustomerView, and MainApp.
+### Creational
+- **Builder** — `Pizza.Builder` (`Pizza.java`)  
+  Fluent creation of immutable pizzas; replaces telescoping constructors.
+- **Factory Method** — `DrinkFactory.create(DrinkType)` (`DrinkFactory.java`, `DrinkType.java`)  
+  Central place to construct `Drinks` from an enum.
 
-The Bridge pattern separates an abstraction from its implementation, allowing each to be modified independently. 
-The UserTypes interface acts as an abstraction and defines methods such as accessUser(). 
-The User class represents a sophisticated abstraction using instances of UserType. CustomerView is an implementation of UserTypes that provides specific functionality for customer-related views. 
-When a user selects her Customer option in her MainApp class, a new User object with a CustomerView instance is created, demonstrating separation between the abstraction and its implementation.
+### Structural
+- **Bridge** — `User` ↔ `IUserType` with `CustomerView` and `AdminView`  
+  `User` delegates to a view implementor; can switch implementations at runtime.
+- **Decorator** — `OrderItem`, `OrderDecorator`, `BasicPizza`, `WithDrink`, `WithSide`  
+  Compose extras around a base item; description and cost accumulate.
 
-Builder pattern: The classes involved are Order, OrderBuilder, and MainApp.
+### Behavioral
+- **Observer** — `Order` ↔ `Customer` via `IOrder`, `ICustomer`  
+  Customers register with an order and are notified when the order changes.
+- **Strategy** — `Checkout` + `PricingStrategy` (`RegularPricing`, `StudentDiscountPricing`)  
+  Pricing rule is pluggable and can be swapped at runtime.
 
-The Builder pattern separates the construction of a complex object from its representation, allowing the same construction process to be used to create different representations. 
-The Order class represents the complex object that is created, containing various attributes of the order such as order number, customer name, pizza details, etc. 
-The OrderBuilder class provides a fluid interface for incrementally building Order objects. In the MainApp class, when a user decides to place an order, a new Order object is created using an OrderBuilder and the required parameters. 
-OrderBuilder encapsulates the construction process, making it easy to create Order objects in a variety of configurations while ensuring immutability of the Order class itself.
+---
+
+## Quick usage (from `MainApp.java`)
+
+```java
+Builder
+Pizza custom = new Pizza.Builder()
+        .base("Thin").size("Large")
+        .addTopping("Pepperoni").addTopping("Mushroom")
+        .extraCheese(true).build();
+
+Factory Method
+Drinks cola  = DrinkFactory.create(DrinkType.COLA);
+Drinks water = DrinkFactory.create(DrinkType.WATER);
+
+Decorator (compose extras)
+OrderItem item = new BasicPizza(custom);
+item = new WithDrink(item, cola);
+item = new WithSide(item, new Sides("Garlic Bread", 3.0));
+System.out.println("[Decorator] " + item.getDescription() + " | Cost: " + item.getCost());
+
+Bridge (swap implementations at runtime)
+User user = new User(new CustomerView());
+user.access();
+user.setUserType(new AdminView());
+user.access();
+
+Observer (register customers; notify on changes)
+Order order = new Order();
+Customer bob = new Customer("Bob");
+Customer eve = new Customer("Eve");
+bob.setOrder(order); eve.setOrder(order);
+order.register(bob); order.register(eve);
+order.placeOrder("Large Pepperoni + Cola");
+order.deleteOrder();
+
+Strategy (switch pricing)
+Checkout checkout = new Checkout();
+checkout.total(item); 
+checkout.setStrategy(new StudentDiscountPricing());
+checkout.total(item);
