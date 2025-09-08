@@ -1,18 +1,16 @@
-
 public class User extends UserTypes {
 
-	public User(IUserType usertype) {
-		super(usertype);
-		// TODO Auto-generated constructor stub
-	}
-	
-	
+    public User(IUserType usertype) {
+        super(usertype);
+    }
 
-	@Override
-	public void accessUser() {
-		// TODO Auto-generated method stub
-		usertype.accessUser();
-		
-	}
+    public void setUserType(IUserType usertype) {  // <-- add this
+        this.usertype = usertype;
+    }
 
+    @Override
+    public void accessUser() {
+        if (usertype != null) usertype.accessUser();
+    }
 }
+

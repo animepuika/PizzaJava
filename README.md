@@ -1,73 +1,133 @@
-Repository link https://github.com/animepuika/PizzaJava
-
-I worked alone because I am a 4 year.
-
-Design Patterns that are being used:
 # Pizza Ordering System (Java)
 
-Console app that shows six classic design patterns in a pizza-ordering context.  
-Clean construction for pizzas, composable extras, decoupled views, order notifications, and swappable pricing rules.
+A console application that demonstrates six classic **Gang of Four (GoF) design patterns** in a pizza-ordering context.  
+The system highlights **clean construction for pizzas, composable extras, decoupled views, order notifications, and swappable pricing rules**.
 
 ---
 
-## Patterns
+## Project Info
+
+- **Repository link:** [PizzaJava on GitHub](https://github.com/animepuika/PizzaJava)  
+- **Developer:** Kristers Dāvis Gruziņš (worked independently as a 4th-year student)  
+- **Technologies:** Java, OOP, Design Patterns  
+
+---
+
+## Implemented Design Patterns
+
+This project showcases six design patterns across the **Creational**, **Structural**, and **Behavioral** categories.  
+Each pattern section explains **what it does**, **why it fits**, and **how it interacts** with other patterns.
+
+---
 
 ### Creational
-- **Builder** — `Pizza.Builder` (`Pizza.java`)  
-  Fluent creation of immutable pizzas; replaces telescoping constructors.
-- **Factory Method** — `DrinkFactory.create(DrinkType)` (`DrinkFactory.java`, `DrinkType.java`)  
-  Central place to construct `Drinks` from an enum.
 
-### Structural
-- **Bridge** — `User` ↔ `IUserType` with `CustomerView` and `AdminView`  
-  `User` delegates to a view implementor; can switch implementations at runtime.
-- **Decorator** — `OrderItem`, `OrderDecorator`, `BasicPizza`, `WithDrink`, `WithSide`  
-  Compose extras around a base item; description and cost accumulate.
+#### Builder — `Pizza.Builder` (`Pizza.java`)
+- **What it does:** Provides a fluent interface for creating immutable `Pizza` objects, avoiding long telescoping constructors.  
+- **Why here:** A pizza can have many optional attributes (base, size, toppings, extras). Builder keeps creation clean and flexible.  
+- **How it interacts:** Works with **Decorator** — pizzas built this way can be wrapped with drinks/sides.
 
-### Behavioral
-- **Observer** — `Order` ↔ `Customer` via `IOrder`, `ICustomer`  
-  Customers register with an order and are notified when the order changes.
-- **Strategy** — `Checkout` + `PricingStrategy` (`RegularPricing`, `StudentDiscountPricing`)  
-  Pricing rule is pluggable and can be swapped at runtime.
+```java
+Pizza custom = new Pizza.Builder()
+    .base("Thin")
+    .size("Large")
+    .addTopping("Pepperoni")
+    .addTopping("Mushroom")
+    .extraCheese(true)
+    .build();
+```
 
 ---
 
-## Quick usage (from `MainApp.java`)
+#### Factory Method — `DrinkFactory.create(DrinkType)` (`DrinkFactory.java`, `DrinkType.java`)
+- **What it does:** Centralizes creation of `Drinks` objects using an enum for type safety.  
+- **Why here:** Makes drink instantiation consistent and easy to extend.  
+- **How it interacts:** Works with **Decorator** — drinks from the factory can be attached to pizzas as extras.
 
 ```java
-Builder
-Pizza custom = new Pizza.Builder()
-        .base("Thin").size("Large")
-        .addTopping("Pepperoni").addTopping("Mushroom")
-        .extraCheese(true).build();
-
-Factory Method
 Drinks cola  = DrinkFactory.create(DrinkType.COLA);
 Drinks water = DrinkFactory.create(DrinkType.WATER);
+```
 
-Decorator (compose extras)
+---
+
+### Structural
+
+#### Bridge — `User` ↔ `IUserType` with `CustomerView` and `AdminView`
+- **What it does:** Separates the `User` abstraction from its implementation (`CustomerView` vs `AdminView`).  
+- **Why here:** Users can take different roles while sharing the same base structure.  
+- **How it interacts:** Integrates with **Observer** — customers receive updates, admins can manage orders.
+
+```java
+User user = new User(new CustomerView());
+user.accessUser();
+user.setUserType(new AdminView());
+user.accessUser();
+```
+
+---
+
+#### Decorator — `OrderItem`, `OrderDecorator`, `BasicPizza`, `WithDrink`, `WithSide`
+- **What it does:** Dynamically adds responsibilities (drinks, sides) around a base pizza. Cost and description accumulate as layers are added.  
+- **Why here:** Orders are naturally composable — avoids dozens of subclasses.  
+- **How it interacts:**  
+  - Wraps **Builder**-made pizzas.  
+  - Adds **Factory Method** drinks.  
+  - Works with **Strategy** to apply pricing rules.
+
+```java
 OrderItem item = new BasicPizza(custom);
 item = new WithDrink(item, cola);
 item = new WithSide(item, new Sides("Garlic Bread", 3.0));
 System.out.println("[Decorator] " + item.getDescription() + " | Cost: " + item.getCost());
+```
 
-Bridge (swap implementations at runtime)
-User user = new User(new CustomerView());
-user.access();
-user.setUserType(new AdminView());
-user.access();
+---
 
-Observer (register customers; notify on changes)
+### Behavioral
+
+#### Observer — `Order` ↔ `Customer` via `IOrder`, `ICustomer`
+- **What it does:** Customers subscribe to an order and are notified when it changes.  
+- **Why here:** Mirrors real-world expectations of order tracking.  
+- **How it interacts:** Works with **Bridge** so different user types receive updates.
+
+```java
 Order order = new Order();
 Customer bob = new Customer("Bob");
 Customer eve = new Customer("Eve");
-bob.setOrder(order); eve.setOrder(order);
-order.register(bob); order.register(eve);
+
+bob.setOrder(order); 
+eve.setOrder(order);
+
+order.register(bob); 
+order.register(eve);
+
 order.placeOrder("Large Pepperoni + Cola");
 order.deleteOrder();
+```
 
-Strategy (switch pricing)
+---
+
+#### Strategy — `Checkout` + `PricingStrategy` (`RegularPricing`, `StudentDiscountPricing`)
+- **What it does:** Encapsulates different pricing rules that can be swapped at runtime.  
+- **Why here:** Restaurants often apply discounts (e.g., student deals). New strategies can be added without changing core logic.  
+- **How it interacts:** Combines with **Decorator** to calculate final prices for flexible order compositions.
+
+```java
 Checkout checkout = new Checkout();
 checkout.total(item); 
+
 checkout.setStrategy(new StudentDiscountPricing());
 checkout.total(item);
+```
+
+---
+
+## How the Patterns Work Together
+
+- **Builder + Decorator:** Build pizzas and extend them with extras.  
+- **Factory Method + Decorator:** Create drinks centrally and attach them to orders.  
+- **Bridge + Observer:** Customers and admins interact differently but still receive updates.  
+- **Decorator + Strategy:** Flexible order composition with adaptable pricing rules.  
+
+This synergy makes the system **modular, extensible, and realistic** for a pizza-ordering scenario. 
