@@ -8,8 +8,36 @@ The system highlights **clean construction for pizzas, composable extras, decoup
 ## Project Info
 
 - **Repository link:** [PizzaJava on GitHub](https://github.com/animepuika/PizzaJava)  
-- **Developer:** Kristers Dāvis Gruziņš (worked independently as a 4th-year student)  
-- **Technologies:** Java, OOP, Design Patterns  
+- **Technologies:** Java, OOP, Design Patterns
+
+---
+
+## Author
+
+**Kristers Dāvis Gruziņš** – Developer and fourth-year student.
+
+---
+
+## Development
+
+This project was independently designed and implemented as a demonstration of multiple design patterns in a cohesive domain.
+
+1. **Planning Phase**: Analyzed the requirements and selected which design patterns to implement for each category (Creational, Structural, Behavioral).
+
+2. **Design Decisions**:  
+   - Selected the pizza ordering domain as a suitable context for demonstrating multiple design patterns.  
+   - Designed the class structure and interfaces to ensure the patterns integrate cleanly.
+
+3. **Implementation**:  
+   - Implemented all design patterns, core code structure, `MainApp` logic, and README documentation.
+
+4. **Code Review and Testing**:  
+   - Iteratively reviewed and tested the code to ensure correctness and proper pattern implementation.
+
+5. **Documentation**:  
+   - Created this README to explain the intent, structure, and interaction of the implemented patterns.
+
+The repository hosts all code in the `src/` directory, and this README documents the implemented design patterns and their interactions.
 
 ---
 
@@ -128,6 +156,6 @@ checkout.total(item);
 - **Builder + Decorator:** Build pizzas and extend them with extras.  
 - **Factory Method + Decorator:** Create drinks centrally and attach them to orders.  
 - **Bridge + Observer:** Customers and admins interact differently but still receive updates.  
-- **Decorator + Strategy:** Flexible order composition with adaptable pricing rules.  
+- **Decorator + Strategy:** Flexible order composition with adaptable pricing rules.
 
-This synergy makes the system **modular, extensible, and realistic** for a pizza-ordering scenario. 
+This synergy makes the system **modular, extensible, and realistic** for a pizza-ordering scenario.
